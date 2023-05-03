@@ -1,4 +1,5 @@
 import { Document, Schema, model } from 'mongoose';
+import { UsuarioDocumentInterface } from './usuario.js';
 
 interface RutaDocumentInterface extends Document {
   id : number;
@@ -7,7 +8,8 @@ interface RutaDocumentInterface extends Document {
   geolocalizacion_fin : number[];
   longitud : number;
   desnivel : number;
-  usuarios : number[];
+  //usuarios tiene que ser un array de los ids de los usuarios
+  usuarios : UsuarioDocumentInterface[];
   tipo : "bicicleta" | "corriendo" | "bicicleta y corriendo";
   calificacion : number;
 }
@@ -65,8 +67,9 @@ const RutaSchema = new Schema<RutaDocumentInterface>({
     }
   },
   usuarios : {
-    type : [Number],
+    type : [Schema.Types.ObjectId],
     required: true,
+    ref : 'Usuario'
   },
   tipo : {
     type : String,

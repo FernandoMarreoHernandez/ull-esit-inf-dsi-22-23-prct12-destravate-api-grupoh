@@ -1,5 +1,8 @@
 import express from 'express';
 import { Usuario } from './../models/usuario.js';
+import { Grupo } from './../models/grupo.js';
+import { Ruta } from './../models/ruta.js';
+import {Reto} from './../models/reto.js';
 
 export const usuarioRouter = express.Router();
 
@@ -102,14 +105,22 @@ usuarioRouter.delete('/users', (req, res) => {
       error: 'Se debe proporcionar un nombre',
     });
   } else {
-    Usuario.findOneAndDelete({nombre: req.query.nombre.toString()}).then((usuario) => {
+    Usuario.findOne({nombre: req.query.nombre.toString()}).then((usuario) => {
       if (!usuario) {
         res.status(404).send();
       } else {
-        res.send(usuario);
+        //hay que borrar del atributo amigos de todos los usuarios que lo tengan como amigo, lo que hay en el atributo amigo son los ids unicos
+        return Usuario.updateMany({amigos: usuario._id}, {$pull: {amigos: usuario._id}}).then(() => {
+          // hacer lo mismo con los grupos de amigos, propiedad de usuario
+          return Usuario.updateMany({grupos: usuario._id}, {$pull: {grupos: usuario._id}}).then(() => {
+            return Usuario.findByIdAndDelete(usuario._id).then((usuario) => {
+              res.send(usuario);
+            });
+          });
+        });
       }
-    }).catch(() => {
-      res.status(400).send();
+    }).catch((error) => {
+      res.status(400).send(error);
     });
   }
 });

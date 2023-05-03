@@ -1,14 +1,16 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, SchemaType, model } from 'mongoose';
+import validator from 'validator';
 
 
 
-interface UsuarioDocumentInterface extends Document {
+export interface UsuarioDocumentInterface extends Document {
   id : number;
   nombre : string;
   rutas_favoritas : number[];
   retos_activos : number[];
-  amigos : number[];
-  grupos: number[][];
+  // quiero que se almacene los ids de los usuarios, en usario document interface pero con los ids
+  amigos : UsuarioDocumentInterface[];
+  grupos: UsuarioDocumentInterface[][];
   estadisticas : number[][];
   actividad : "bicicleta" | "correr" | "bicicleta y correr";
   historico_rutas : number[][][];
@@ -38,11 +40,12 @@ const UsuarioSchema = new Schema<UsuarioDocumentInterface>({
     required: true
   },
   amigos : {
-    type : [Number],
-    required: true
+    type : [Schema.Types.ObjectId],
+    required: true,
+    ref : 'Usuarios'
   },
   grupos : {
-    type : [[Number]],
+    type : [[Schema.Types.ObjectId]],
     required: true
   },
   estadisticas : {

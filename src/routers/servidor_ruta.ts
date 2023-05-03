@@ -1,5 +1,6 @@
 import express from 'express';
 import { Ruta } from './../models/ruta.js';
+import { Usuario } from './../models/usuario.js';
 
 export const rutaRouter = express.Router();
 
@@ -7,9 +8,22 @@ export const rutaRouter = express.Router();
 rutaRouter.use(express.json());
 
 rutaRouter.post('/tracks', (req, res) => {
+  const usuarios = req.body.usuarios;
+  usuarios.forEach((usuario) => {
+    Usuario.findOne({nombre: usuario}).then((usuario) => {
+      if(!usuario) {
+        return res.status(404).send();
+      }
+    });
+  });
   const ruta = new Ruta(req.body);
-  ruta.save().then((ruta) => {
-    res.status(200).send(ruta);
+  return ruta.save().then((ruta) => {
+    return ruta.populate({
+        path: 'usuarios',
+        select:  ['nombre']
+      }).then(() => {
+        res.status(201).send(ruta);
+    });
   }).catch((error) => {
     res.status(400).send(error);
   });

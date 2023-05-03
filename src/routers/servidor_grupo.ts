@@ -5,13 +5,15 @@ export const grupoRouter = express.Router();
 
 grupoRouter.use(express.json());
 
-grupoRouter.post('/groups', (req, res) => {
+grupoRouter.post('/groups', async (req, res) => {
   const grupo = new Grupo(req.body);
-  grupo.save().then((grupo) => {
-    res.status(200).send(grupo);
-  }).catch((error) => {
-    res.status(400).send(error);
-  });
+  try {
+    await grupo.save();
+    return res.status(201).send(grupo);
+  }
+  catch(error) {
+    return res.status(500).send(error);
+  }
 });
 
 grupoRouter.get('/groups', (req, res) => {
