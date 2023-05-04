@@ -8,7 +8,6 @@ interface RutaDocumentInterface extends Document {
   geolocalizacion_fin : number[];
   longitud : number;
   desnivel : number;
-  //usuarios tiene que ser un array de los ids de los usuarios
   usuarios : UsuarioDocumentInterface[];
   tipo : "bicicleta" | "corriendo" | "bicicleta y corriendo";
   calificacion : number;

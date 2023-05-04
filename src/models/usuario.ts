@@ -8,7 +8,6 @@ export interface UsuarioDocumentInterface extends Document {
   nombre : string;
   rutas_favoritas : number[];
   retos_activos : number[];
-  // quiero que se almacene los ids de los usuarios, en usario document interface pero con los ids
   amigos : UsuarioDocumentInterface[];
   grupos: UsuarioDocumentInterface[][];
   estadisticas : number[][];
@@ -61,7 +60,6 @@ const UsuarioSchema = new Schema<UsuarioDocumentInterface>({
     type : [[[Number]]],
     required : true,
     validate : (value : number[][][]) => {
-      //en el segundo array solo puede tener 2 arrays dentro, el primero es con una fecha, y el segundo es con numeros
       if(value.length > 0){
         if(value[0].length > 0){
           if(value[0].length != 2){
