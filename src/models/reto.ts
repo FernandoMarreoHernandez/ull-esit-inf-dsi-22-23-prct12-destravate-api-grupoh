@@ -1,12 +1,14 @@
 import { Document, Schema, model } from 'mongoose';
+import { UsuarioDocumentInterface } from './usuario.js';
+import { RutaDocumentInterface } from './ruta.js';
 
-interface RetoDocumentInterface extends Document {
+export interface RetoDocumentInterface extends Document {
   id : number;
   nombre : string;
-  rutas : number[];
+  rutas : RutaDocumentInterface[];
   tipo : 'corriendo' | 'bicicleta' | 'corriendo y bicicleta';
   kilometros :number;
-  usuarios : number[];
+  usuarios : UsuarioDocumentInterface[];
 }
 
 const RetoSchema = new Schema<RetoDocumentInterface>({
@@ -21,8 +23,9 @@ const RetoSchema = new Schema<RetoDocumentInterface>({
     unique: true
   },
   rutas:{
-    type: [Number],
+    type: [Schema.Types.ObjectId],
     required: true,
+    ref: 'Rutas'
   },
   tipo:{
     type: String,
@@ -33,8 +36,9 @@ const RetoSchema = new Schema<RetoDocumentInterface>({
     required: true,
   },
   usuarios:{
-    type: [Number],
+    type: [Schema.Types.ObjectId],
     required: true,
+    ref: 'Usuarios'
   }
 });
 

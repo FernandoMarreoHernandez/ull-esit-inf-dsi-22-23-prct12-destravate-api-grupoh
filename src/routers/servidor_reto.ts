@@ -1,128 +1,153 @@
 import express from 'express';
 import { Reto } from './../models/reto.js';
+import { Usuario } from './../models/usuario.js';
+import { Ruta } from './../models/ruta.js';
+import { Grupo } from './../models/grupo.js';
 
 export const retoRouter = express.Router();
 
 retoRouter.use(express.json());
 
-retoRouter.post('/challenges', (req, res) => {
+retoRouter.post('/challenges', async(req, res) => {
+  const usuarios = req.body.usuarios;
+  const rutas = req.body.rutas;
   const reto = new Reto(req.body);
-  reto.save().then((reto) => {
-    res.status(200).send(reto);
-  }).catch((error) => {
-    res.status(400).send(error);
-  });
+  try {
+    for (const usuario of usuarios) {
+      await Usuario.findById(usuario);
+    }
+    for (const ruta of rutas) {
+      await Ruta.findById(ruta);
+    }
+    await reto.save();
+    return res.status(201).send(reto);
+  }catch (error) {
+    return res.status(500).send(error);
+  }
+  
+
 });
 
-retoRouter.get('/challenges', (req, res) => {
+retoRouter.get('/challenges', async (req, res) => {
   const filter = req.query.nombre? {nombre: req.query.nombre.toString()} : {};
-  Reto.find(filter).then((reto) => {
-    if(reto.length !== 0) {
-      res.send(reto);
-    } else {
-      res.status(404).send();
+  try {
+    const retos = await Reto.find(filter);
+    if(retos.length !== 0) {
+      return res.send(retos);
     }
-  }).catch((error) => {
-    res.status(500).send(error);
-  });
+    return res.status(404).send();
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
-retoRouter.get('/challenges/:id', (req, res) => {
-  Reto.findById(req.params.id).then((reto) => {
-    if(!reto) {
-      res.status(404).send();
-    } else {
-      res.send(reto);
+retoRouter.get('/challenges/:id', async(req, res) => {
+  try {
+    const reto = await Reto.findById(req.params.id);
+    if (!reto) {
+      return res.status(404).send({
+        error: "El reto no se encuentra"
+      });
     }
-  }).catch((error) => {
-    res.status(500).send(error);
-  });
+    return res.send(reto);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
-retoRouter.patch('/challenges', (req, res) => {
+retoRouter.patch('/challenges', async (req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
       error: 'Se debe proporcionar un nombre',
     });
-  } else {
-    const allowedUpdates = ['nombre', 'id', 'rutas', 'tipo', 'kilometros', 'usuarios'];
-    const actualUpdates = Object.keys(req.body);
-    const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
-    if (!isValidUpdate) {
-      res.status(400).send({
-        error: 'Esta modificacion no esta permitida',
-      });
-    } else {
-      Reto.findOneAndUpdate({nombre: req.query.nombre.toString()}, req.body, {
-        new: true,
-        runValidators: true,
-      }).then((reto) => {
-        if (!reto) {
-          res.status(404).send();
-        } else {
-          res.send(reto);
-        }
-      }).catch((error) => {
-        res.status(400).send(error);
-      });
+  }
+  const allowedUpdates = ['nombre', 'id', 'rutas', 'tipo', 'kilometros', 'usuarios'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+  if (!isValidUpdate) {
+    return res.status(400).send({
+      error: 'Esta modificacion no esta permitida',
+    });
+  } 
+  try {
+    const reto = await Reto.findOneAndUpdate({
+      nombre: req.query.nombre.toString()
+    }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!reto) {
+      return res.status(404).send();
     }
+    return res.send(reto);
+  } catch (error) {
+    return res.status(500).send(error);
   }
 });
 
-retoRouter.patch('/challenges/:id', (req, res) => {
+retoRouter.patch('/challenges/:id', async (req, res) => {
   const allowedUpdates = ['nombre', 'id', 'rutas', 'tipo', 'kilometros', 'usuarios'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate =
       actualUpdates.every((update) => allowedUpdates.includes(update));
-
   if (!isValidUpdate) {
-    res.status(400).send({
+    return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } else {
-    Reto.findByIdAndUpdate(req.params.id, req.body, {
+  } 
+  try {
+    const reto = await Reto.findByIdAndUpdate({
+      _id: req.params.id
+    }, req.body, {
       new: true,
       runValidators: true,
-    }).then((reto) => {
-      if (!reto) {
-        res.status(404).send();
-      } else {
-        res.send(reto);
-      }
-    }).catch((error) => {
-      res.status(400).send(error);
     });
+    if (!reto) {
+      return res.status(404).send();
+    } 
+    return res.send(reto);
+  } catch (error) {
+    return res.status(500).send(error);
   }
 });
+   
 
-retoRouter.delete('/challenges', (req, res) => {
+retoRouter.delete('/challenges', async (req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
       error: 'Se debe proporcionar un nombre',
     });
   } else {
-    Reto.findOneAndDelete({nombre: req.query.nombre.toString()}).then((reto) => {
+    try {
+      const reto = await Reto.findOne({nombre: req.query.nombre.toString()});
       if (!reto) {
-        res.status(404).send();
-      } else {
-        res.send(reto);
+        return res.status(404).send();
       }
-    }).catch(() => {
-      res.status(400).send();
-    });
+      try {
+        await Usuario.updateMany({}, {$pull: {retos_activos: reto._id}});
+      } catch {}
+      const reto_final = await Reto.findOneAndDelete({nombre: req.query.nombre.toString()});
+      return res.send(reto_final);
+    }catch (error) {
+      return res.status(500).send(error);
+    }
   }
 });
 
-retoRouter.delete('/challenges/:id', (req, res) => {
-  Reto.findByIdAndDelete(req.params.id).then((reto) => {
+retoRouter.delete('/challenges/:id', async (req, res) => {
+  try {
+    const reto = await Reto.findById(req.params.id);
     if (!reto) {
-      res.status(404).send();
-    } else {
-      res.send(reto);
+      return res.status(404).send();
     }
-  }).catch(() => {
-    res.status(400).send();
-  });
+    try {
+      await Usuario.updateMany({}, {$pull: {retos_activos: reto._id}});
+    } catch {}
+    const reto_final = await Reto.findByIdAndDelete(req.params.id);
+    return res.send(reto_final);
+  }catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
 

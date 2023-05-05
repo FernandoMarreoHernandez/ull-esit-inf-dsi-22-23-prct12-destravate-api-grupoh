@@ -1,7 +1,7 @@
 import { Document, Schema, model } from 'mongoose';
 import { UsuarioDocumentInterface } from './usuario.js';
 
-interface RutaDocumentInterface extends Document {
+export interface RutaDocumentInterface extends Document {
   id : number;
   nombre : string;
   geolocalizacion_inicio : number[];

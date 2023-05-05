@@ -1,13 +1,14 @@
 import { Document, Schema, SchemaType, model } from 'mongoose';
 import validator from 'validator';
-
+import { RetoDocumentInterface } from './reto.js';
+import { RutaDocumentInterface } from './ruta.js';
 
 
 export interface UsuarioDocumentInterface extends Document {
   id : number;
   nombre : string;
-  rutas_favoritas : number[];
-  retos_activos : number[];
+  rutas_favoritas : RutaDocumentInterface[];
+  retos_activos : RetoDocumentInterface[];
   amigos : UsuarioDocumentInterface[];
   grupos: UsuarioDocumentInterface[][];
   estadisticas : number[][];
@@ -31,12 +32,14 @@ const UsuarioSchema = new Schema<UsuarioDocumentInterface>({
     }
   },
   rutas_favoritas : {
-    type : [Number],
-    required: true
+    type : [Schema.Types.ObjectId],
+    required: true,
+    ref : 'Rutas'
   },
   retos_activos : {
-    type : [Number],
-    required: true
+    type : [Schema.Types.ObjectId],
+    required: true,
+    ref : 'Retos'
   },
   amigos : {
     type : [Schema.Types.ObjectId],
@@ -45,7 +48,8 @@ const UsuarioSchema = new Schema<UsuarioDocumentInterface>({
   },
   grupos : {
     type : [[Schema.Types.ObjectId]],
-    required: true
+    required: true,
+    ref : 'Usuarios'
   },
   estadisticas : {
     type : [[Number]],

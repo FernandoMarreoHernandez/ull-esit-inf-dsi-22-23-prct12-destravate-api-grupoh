@@ -1,12 +1,14 @@
 import { Document, Schema, model } from 'mongoose';
+import { UsuarioDocumentInterface } from './usuario.js';
+import { RutaDocumentInterface } from './ruta.js';
 
 interface GrupoDocumentInterface extends Document {
   id : number;
   nombre : string;
-  participantes : number[];
+  participantes : UsuarioDocumentInterface[];
   estadisticas : number[][];
-  clasificacion : number[][];
-  rutas_favoritas : number[];
+  clasificacion : UsuarioDocumentInterface[][];
+  rutas_favoritas : RutaDocumentInterface[];
   historico_rutas : number[][][];
 }
 
@@ -22,20 +24,23 @@ const GrupoSchema = new Schema<GrupoDocumentInterface>({
     unique : true
   },
   participantes : {
-    type : [Number],
-    required : true
+    type : [Schema.Types.ObjectId],
+    required : true,
+    ref : 'Usuarios'
   },
   estadisticas : {
     type : [[Number]],
     required : true
   },
   clasificacion : {
-    type : [[Number]],
-    required : true
+    type : [[Schema.Types.ObjectId]],
+    required : true,
+    ref : 'Usuarios'
   },
   rutas_favoritas : {
-    type : [Number],
-    required : true
+    type : [Schema.Types.ObjectId],
+    required : true,
+    ref : 'Rutas'
   },
   historico_rutas : {
     type : [[[Number]]],

@@ -13,6 +13,8 @@ usuarioRouter.post('/users', async (req, res) => {
   const usuario = new Usuario(req.body);
   const amigos = usuario.amigos;
   const grupos = usuario.grupos;
+  const rutas = usuario.rutas_favoritas;
+  const retos = usuario.retos_activos;
   try {
     for (const amigo of amigos) {
       await Usuario.findById(amigo);
@@ -21,6 +23,12 @@ usuarioRouter.post('/users', async (req, res) => {
       for (const usuario of grupo) {
         await Usuario.findById(usuario);
       }
+    }
+    for (const ruta of rutas) {
+      await Ruta.findById(ruta);
+    }
+    for (const reto of retos) {
+      await Reto.findById(reto);
     }
     await usuario.save();
     return res.status(201).send(usuario);
@@ -47,7 +55,7 @@ usuarioRouter.get('/users/:id', async(req, res) => {
     const usuario = await Usuario.findById(req.params.id);
     if (!usuario) {
       return res.status(404).send({
-        error: "User not found"
+        error: "El usuario no se encuentra"
       });
     }
     return res.send(usuario);
@@ -188,7 +196,6 @@ usuarioRouter.delete('/users/:id', async (req, res) => {
     } catch (error) {}
     const usuario_final = await Usuario.findByIdAndDelete(req.params.id);
     return res.status(200).send(usuario_final);
-    res.send(usuario);
   } catch (error) {
     return res.status(400).send(error);
   }

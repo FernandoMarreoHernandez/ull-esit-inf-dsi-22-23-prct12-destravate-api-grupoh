@@ -1,5 +1,8 @@
 import express from 'express';
 import { Grupo } from './../models/grupo.js';
+import { Usuario } from './../models/usuario.js';
+import { Ruta } from './../models/ruta.js';
+import { Reto } from './../models/reto.js';
 
 export const grupoRouter = express.Router();
 
@@ -7,7 +10,19 @@ grupoRouter.use(express.json());
 
 grupoRouter.post('/groups', async (req, res) => {
   const grupo = new Grupo(req.body);
+  const participantes = req.body.participantes;
+  const clasificacion = req.body.clasificacion;
+  const rutas_favoritas = req.body.rutas_favoritas;
   try {
+    for (const participante of participantes) {
+      await Usuario.findById(participante);
+    }
+    for (const usuario of clasificacion) {
+      await Usuario.findById(usuario);
+    }
+    for (const ruta of rutas_favoritas) {
+      await Ruta.findById(ruta);
+    }
     await grupo.save();
     return res.status(201).send(grupo);
   }
@@ -16,114 +31,110 @@ grupoRouter.post('/groups', async (req, res) => {
   }
 });
 
-grupoRouter.get('/groups', (req, res) => {
+grupoRouter.get('/groups', async (req, res) => {
   const filter = req.query.nombre? {nombre: req.query.nombre.toString()} : {};
-  Grupo.find(filter).then((grupo) => {
-    if(grupo.length !== 0) {
-      res.send(grupo);
-    } else {
-      res.status(404).send();
+  try {
+    const grupos = await Grupo.find(filter);
+    if(grupos.length !== 0) {
+      return res.send(grupos);
     }
-  }).catch((error) => {
-    res.status(500).send(error);
-  });
+    return res.status(404).send();
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
-grupoRouter.get('/groups/:id', (req, res) => {
-  Grupo.findById(req.params.id).then((grupo) => {
-    if(!grupo) {
-      res.status(404).send();
-    } else {
-      res.send(grupo);
+grupoRouter.get('/groups/:id', async (req, res) => {
+  try {
+    const grupo = await Grupo.findById(req.params.id);
+    if (!grupo) {
+      return res.status(404).send({
+        error: 'El grupo no se encuentra',
+      });
     }
-  }).catch((error) => {
-    res.status(500).send(error);
-  });
+    return res.send(grupo);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
-grupoRouter.patch('/groups', (req, res) => {
+grupoRouter.patch('/groups', async (req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
       error: 'Se debe proporcionar un nombre',
     });
-  } else {
-    const allowedUpdates = ['nombre', 'id', 'participantes', 'estadisticas', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
-    const actualUpdates = Object.keys(req.body);
-    const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
-    if (!isValidUpdate) {
-      res.status(400).send({
-        error: 'Esta modificacion no esta permitida',
-      });
-    } else {
-      Grupo.findOneAndUpdate({nombre: req.query.nombre.toString()}, req.body, {
-        new: true,
-        runValidators: true,
-      }).then((grupo) => {
-        if (!grupo) {
-          res.status(404).send();
-        } else {
-          res.send(grupo);
-        }
-      }).catch((error) => {
-        res.status(400).send(error);
-      });
-    }
+  }
+  const allowedUpdates = ['nombre', 'id', 'participantes', 'estadisticas', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
+  const actualUpdates = Object.keys(req.body);
+  const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
+  if (!isValidUpdate) {
+    return res.status(400).send({
+      error: 'Esta modificacion no esta permitida',
+    });
+  } 
+  try {
+    const grupo = await Grupo.findOneAndUpdate({
+      nombre: req.query.nombre.toString()
+    }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!grupo) {
+      return res.status(404).send();
+    } 
+    return res.send(grupo);
+  } catch (error) {
+    return res.status(500).send(error);
   }
 });
+      
 
-grupoRouter.patch('/groups/:id', (req, res) => {
-    const allowedUpdates = ['nombre', 'id', 'participantes', 'estadisticas', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
+grupoRouter.patch('/groups/:id', async (req, res) => {
+  const allowedUpdates = ['nombre', 'id', 'participantes', 'estadisticas', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
   const actualUpdates = Object.keys(req.body);
   const isValidUpdate =
       actualUpdates.every((update) => allowedUpdates.includes(update));
-
   if (!isValidUpdate) {
-    res.status(400).send({
+    return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } else {
-    Grupo.findByIdAndUpdate(req.params.id, req.body, {
+  } 
+  try {
+    const grupo = await Grupo.findByIdAndUpdate({
+      _id: req.params.id,
+    }, req.body, {
       new: true,
       runValidators: true,
-    }).then((grupo) => {
-      if (!grupo) {
-        res.status(404).send();
-      } else {
-        res.send(grupo);
-      }
-    }).catch((error) => {
-      res.status(400).send(error);
     });
+    if (!grupo) {
+      return res.status(404).send();
+    } 
+    return res.send(grupo);
+  }catch (error) {
+    return res.status(500).send(error);
   }
 });
+    
 
-grupoRouter.delete('/groups', (req, res) => {
+grupoRouter.delete('/groups', async(req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
       error: 'Se debe proporcionar un nombre',
     });
   } else {
-    Grupo.findOneAndDelete({nombre: req.query.nombre.toString()}).then((grupo) => {
-      if (!grupo) {
-        res.status(404).send();
-      } else {
-        res.send(grupo);
-      }
-    }).catch(() => {
-      res.status(400).send();
-    });
+    try {
+      await Grupo.findOneAndDelete({nombre: req.query.nombre.toString()});
+    }catch (error) {
+      return res.status(500).send(error);
+    }
   }
 });
 
-grupoRouter.delete('/groups/:id', (req, res) => {
-  Grupo.findByIdAndDelete(req.params.id).then((grupo) => {
-    if (!grupo) {
-      res.status(404).send();
-    } else {
-      res.send(grupo);
-    }
-  }).catch(() => {
-    res.status(400).send();
-  });
+grupoRouter.delete('/groups/:id', async (req, res) => {
+  try {
+    await Grupo.findByIdAndDelete(req.params.id);
+  }catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
