@@ -2,6 +2,8 @@ import { Document, Schema, SchemaType, model } from 'mongoose';
 import validator from 'validator';
 import { RetoDocumentInterface } from './reto.js';
 import { RutaDocumentInterface } from './ruta.js';
+import { Ruta } from './ruta.js';
+import { Reto } from './reto.js';
 
 
 export interface UsuarioDocumentInterface extends Document {
@@ -34,22 +36,56 @@ const UsuarioSchema = new Schema<UsuarioDocumentInterface>({
   rutas_favoritas : {
     type : [Schema.Types.ObjectId],
     required: true,
-    ref : 'Rutas'
+    ref : 'Rutas',
+    validate : async (value : SchemaType[]) => {
+      for(const ruta of value){
+        const rutacheck = await Ruta.findById(ruta);
+        if(!rutacheck){
+          throw new Error('La ruta no existe');
+        }
+      }
+    }
   },
   retos_activos : {
     type : [Schema.Types.ObjectId],
     required: true,
-    ref : 'Retos'
+    ref : 'Retos',
+    validate : async (value : SchemaType[]) => {
+      for(const reto of value){
+        const retocheck = await Reto.findById(reto);
+        if(!retocheck){
+          throw new Error('El reto no existe');
+        }
+      }
+    }
   },
   amigos : {
     type : [Schema.Types.ObjectId],
     required: true,
-    ref : 'Usuarios'
+    ref : 'Usuarios',
+    validate : async (value : SchemaType[]) => {
+      for(const amigo of value){
+        const amigocheck = await Usuario.findById(amigo);
+        if(!amigocheck){
+          throw new Error('no puedes añadir a un amigo que no existe');
+        }
+      }
+    }
   },
   grupos : {
     type : [[Schema.Types.ObjectId]],
     required: true,
-    ref : 'Usuarios'
+    ref : 'Usuarios',
+    validate : async (value : SchemaType[][]) => {
+      for(const grupo of value){
+        for(const usuario of grupo){
+          const usuariocheck = await Usuario.findById(usuario);
+          if(!usuariocheck){
+            throw new Error('no puedes añadir a un amigo que no existe');
+          }
+        }
+      }
+    }
   },
   estadisticas : {
     type : [[Number]],

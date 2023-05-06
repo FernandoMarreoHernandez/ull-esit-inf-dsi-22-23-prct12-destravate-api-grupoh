@@ -71,7 +71,7 @@ grupoRouter.patch('/groups', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const grupo = await Grupo.findOneAndUpdate({
       nombre: req.query.nombre.toString()
@@ -81,13 +81,13 @@ grupoRouter.patch('/groups', async (req, res) => {
     });
     if (!grupo) {
       return res.status(404).send();
-    } 
+    }
     return res.send(grupo);
   } catch (error) {
     return res.status(500).send(error);
   }
 });
-      
+
 
 grupoRouter.patch('/groups/:id', async (req, res) => {
   const allowedUpdates = ['nombre', 'id', 'participantes', 'estadisticas', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
@@ -98,7 +98,7 @@ grupoRouter.patch('/groups/:id', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const grupo = await Grupo.findByIdAndUpdate({
       _id: req.params.id,
@@ -108,22 +108,26 @@ grupoRouter.patch('/groups/:id', async (req, res) => {
     });
     if (!grupo) {
       return res.status(404).send();
-    } 
+    }
     return res.send(grupo);
   }catch (error) {
     return res.status(500).send(error);
   }
 });
-    
+
 
 grupoRouter.delete('/groups', async(req, res) => {
   if (!req.query.nombre) {
-    res.status(400).send({
+    return res.status(400).send({
       error: 'Se debe proporcionar un nombre',
     });
   } else {
     try {
-      await Grupo.findOneAndDelete({nombre: req.query.nombre.toString()});
+      const grupo_final = await Grupo.findOneAndDelete({nombre: req.query.nombre.toString()});
+      if (!grupo_final) {
+        return res.status(404).send();
+      }
+      return res.status(200).send(grupo_final);
     }catch (error) {
       return res.status(500).send(error);
     }
@@ -132,7 +136,11 @@ grupoRouter.delete('/groups', async(req, res) => {
 
 grupoRouter.delete('/groups/:id', async (req, res) => {
   try {
-    await Grupo.findByIdAndDelete(req.params.id);
+    const grupo_final = await Grupo.findByIdAndDelete(req.params.id);
+    if (!grupo_final) {
+      return res.status(404).send();
+    }
+    return res.status(200).send(grupo_final);
   }catch (error) {
     return res.status(500).send(error);
   }

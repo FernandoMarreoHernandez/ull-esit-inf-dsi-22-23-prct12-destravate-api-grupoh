@@ -1,5 +1,6 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, model, SchemaType } from 'mongoose';
 import { UsuarioDocumentInterface } from './usuario.js';
+import { Usuario } from './usuario.js';
 
 export interface RutaDocumentInterface extends Document {
   id : number;
@@ -68,7 +69,15 @@ const RutaSchema = new Schema<RutaDocumentInterface>({
   usuarios : {
     type : [Schema.Types.ObjectId],
     required: true,
-    ref : 'Usuario'
+    ref : 'Usuario',
+    validate : async (value : SchemaType[]) => {
+      for(const usuario of value){
+        const usuariocheck = await Usuario.findById(usuario);
+        if(!usuariocheck){
+          throw new Error('El usuario no existe');
+        }
+      }
+    }
   },
   tipo : {
     type : String,

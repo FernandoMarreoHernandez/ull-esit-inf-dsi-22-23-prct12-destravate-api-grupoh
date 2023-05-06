@@ -1,6 +1,8 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, model, SchemaType } from 'mongoose';
 import { UsuarioDocumentInterface } from './usuario.js';
 import { RutaDocumentInterface } from './ruta.js';
+import { Usuario } from './usuario.js';
+import { Ruta } from './ruta.js';
 
 interface GrupoDocumentInterface extends Document {
   id : number;
@@ -26,7 +28,15 @@ const GrupoSchema = new Schema<GrupoDocumentInterface>({
   participantes : {
     type : [Schema.Types.ObjectId],
     required : true,
-    ref : 'Usuarios'
+    ref : 'Usuarios',
+    validate : async (value : SchemaType[]) => {
+      for(const usuario of value){
+        const usuariocheck = await Usuario.findById(usuario);
+        if(!usuariocheck){
+          throw new Error('El usuario no existe');
+        }
+      }
+    }
   },
   estadisticas : {
     type : [[Number]],
@@ -35,12 +45,28 @@ const GrupoSchema = new Schema<GrupoDocumentInterface>({
   clasificacion : {
     type : [[Schema.Types.ObjectId]],
     required : true,
-    ref : 'Usuarios'
+    ref : 'Usuarios',
+    validate : async (value : SchemaType[]) => {
+      for(const usuario of value){
+        const usuariocheck = await Usuario.findById(usuario);
+        if(!usuariocheck){
+          throw new Error('El usuario no existe');
+        }
+      }
+    }
   },
   rutas_favoritas : {
     type : [Schema.Types.ObjectId],
     required : true,
-    ref : 'Rutas'
+    ref : 'Rutas',
+    validate : async (value : SchemaType[]) => {
+      for(const ruta of value){
+        const rutacheck = await Ruta.findById(ruta);
+        if(!rutacheck){
+          throw new Error('La ruta no existe');
+        }
+      }
+    }
   },
   historico_rutas : {
     type : [[[Number]]],

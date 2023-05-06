@@ -1,6 +1,8 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, model, SchemaType } from 'mongoose';
 import { UsuarioDocumentInterface } from './usuario.js';
 import { RutaDocumentInterface } from './ruta.js';
+import { Ruta } from './ruta.js';
+import { Usuario } from './usuario.js';
 
 export interface RetoDocumentInterface extends Document {
   id : number;
@@ -25,7 +27,15 @@ const RetoSchema = new Schema<RetoDocumentInterface>({
   rutas:{
     type: [Schema.Types.ObjectId],
     required: true,
-    ref: 'Rutas'
+    ref: 'Rutas',
+    validate : async (value : SchemaType[]) => {
+      for(const ruta of value){
+        const rutacheck = await Ruta.findById(ruta);
+        if(!rutacheck){
+          throw new Error('La ruta no existe');
+        }
+      }
+    }
   },
   tipo:{
     type: String,
@@ -38,7 +48,15 @@ const RetoSchema = new Schema<RetoDocumentInterface>({
   usuarios:{
     type: [Schema.Types.ObjectId],
     required: true,
-    ref: 'Usuarios'
+    ref: 'Usuarios',
+    validate : async (value : SchemaType[]) => {
+      for(const usuario of value){
+        const usuariocheck = await Usuario.findById(usuario);
+        if(!usuariocheck){
+          throw new Error('El usuario no existe');
+        }
+      }
+    }
   }
 });
 
