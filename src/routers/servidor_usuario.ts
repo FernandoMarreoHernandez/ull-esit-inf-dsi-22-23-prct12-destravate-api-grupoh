@@ -11,25 +11,7 @@ usuarioRouter.use(express.json());
 
 usuarioRouter.post('/users', async (req, res) => {
   const usuario = new Usuario(req.body);
-  const amigos = usuario.amigos;
-  const grupos = usuario.grupos;
-  const rutas = usuario.rutas_favoritas;
-  const retos = usuario.retos_activos;
   try {
-    for (const amigo of amigos) {
-      await Usuario.findById(amigo);
-    }
-    for (const grupo of grupos) {
-      for (const usuario of grupo) {
-        await Usuario.findById(usuario);
-      }
-    }
-    for (const ruta of rutas) {
-      await Ruta.findById(ruta);
-    }
-    for (const reto of retos) {
-      await Reto.findById(reto);
-    }
     await usuario.save();
     return res.status(201).send(usuario);
   } catch (error) {

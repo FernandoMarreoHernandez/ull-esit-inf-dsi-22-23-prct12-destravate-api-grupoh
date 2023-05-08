@@ -10,11 +10,7 @@ export const rutaRouter = express.Router();
 rutaRouter.use(express.json());
 
 rutaRouter.post('/tracks', async(req, res) => {
-  const usuarios = req.body.usuarios;
   try {
-    for (const usuario of usuarios) {
-      await Usuario.findById(usuario);
-    }
     const ruta = new Ruta(req.body);
     await ruta.save();
     res.status(201).send(ruta);

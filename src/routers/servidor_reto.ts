@@ -9,16 +9,8 @@ export const retoRouter = express.Router();
 retoRouter.use(express.json());
 
 retoRouter.post('/challenges', async(req, res) => {
-  const usuarios = req.body.usuarios;
-  const rutas = req.body.rutas;
   const reto = new Reto(req.body);
   try {
-    for (const usuario of usuarios) {
-      await Usuario.findById(usuario);
-    }
-    for (const ruta of rutas) {
-      await Ruta.findById(ruta);
-    }
     await reto.save();
     return res.status(201).send(reto);
   }catch (error) {
