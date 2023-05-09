@@ -13,6 +13,16 @@ export interface RetoDocumentInterface extends Document {
   usuarios : UsuarioDocumentInterface[];
 }
 
+/**
+ * Esquema de la colección de retos
+ * @type {Schema<RetoDocumentInterface>}
+ * @param {number} id - Identificador del reto
+ * @param {string} nombre - Nombre del reto
+ * @param {RutaDocumentInterface[]} rutas - Rutas del reto
+ * @param {'corriendo' | 'bicicleta' | 'corriendo y bicicleta'} tipo - Tipo de reto
+ * @param {number} kilometros - Kilometros del reto
+ * @param {UsuarioDocumentInterface[]} usuarios - Usuarios del reto
+ */
 const RetoSchema = new Schema<RetoDocumentInterface>({
   id:{
     type: Number,

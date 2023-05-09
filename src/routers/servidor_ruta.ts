@@ -9,6 +9,9 @@ export const rutaRouter = express.Router();
 
 rutaRouter.use(express.json());
 
+/**
+ * funcion para añadir una ruta
+ */
 rutaRouter.post('/tracks', async(req, res) => {
   try {
     const ruta = new Ruta(req.body);
@@ -19,6 +22,9 @@ rutaRouter.post('/tracks', async(req, res) => {
   }
 });
 
+/**
+ * funcion para mostrar las rutas
+ */
 rutaRouter.get('/tracks', async (req, res) => {
   const filter = req.query.nombre? {nombre: req.query.nombre.toString()} : {};
   try {
@@ -32,6 +38,9 @@ rutaRouter.get('/tracks', async (req, res) => {
   }
 });
 
+/**
+ * funcion para mostrar una ruta en concreto por id
+ */
 rutaRouter.get('/tracks/:id', async (req, res) => {
   try {
     const ruta = await Ruta.findById(req.params.id);
@@ -46,6 +55,9 @@ rutaRouter.get('/tracks/:id', async (req, res) => {
   }
 });
 
+/**
+ * funcion para modificar una ruta en concreto por nombre
+ */
 rutaRouter.patch('/tracks', async (req, res) => {
   if (!req.query.nombre) {
     return res.status(400).send({
@@ -76,6 +88,9 @@ rutaRouter.patch('/tracks', async (req, res) => {
   }
 });
 
+/**
+ * funcion para modificar una ruta en concreto por id
+ */
 rutaRouter.patch('/tracks/:id', async (req, res) => {
   const allowedUpdates = ['nombre', 'calificacion', 'desnivel', 'longitud', 'geolocalizacion_inicio', 'geolocation_fin', 'usuarios', 'tipo'];
   const actualUpdates = Object.keys(req.body);
@@ -86,7 +101,7 @@ rutaRouter.patch('/tracks/:id', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const ruta = await Ruta.findByIdAndUpdate({
       _id: req.params.id
@@ -103,6 +118,9 @@ rutaRouter.patch('/tracks/:id', async (req, res) => {
   }
 });
 
+/**
+ * funcion para eliminar una ruta en concreto por nombre
+ */
 rutaRouter.delete('/tracks', async (req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
@@ -132,6 +150,9 @@ rutaRouter.delete('/tracks', async (req, res) => {
 
 });
 
+/**
+ * funcion para eliminar una ruta en concreto por id
+ */
 rutaRouter.delete('/tracks/:id', async (req, res) => {
   try {
     const ruta = await Ruta.findById(req.params.id);

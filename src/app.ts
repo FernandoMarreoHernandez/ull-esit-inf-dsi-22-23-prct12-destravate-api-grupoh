@@ -6,6 +6,7 @@ import { grupoRouter } from './routers/servidor_grupo.js';
 import { retoRouter } from './routers/servidor_reto.js';
 import { defaultRouter } from './routers/default.js';
 
+// inicia la aplicación express
 export const app = express();
 app.use(express.json());
 app.use(rutaRouter);

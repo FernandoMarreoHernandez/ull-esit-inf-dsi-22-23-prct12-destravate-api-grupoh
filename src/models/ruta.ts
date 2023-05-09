@@ -14,6 +14,19 @@ export interface RutaDocumentInterface extends Document {
   calificacion : number;
 }
 
+/**
+ * Esquema de la colección de rutas
+ * @type {Schema<RutaDocumentInterface>}
+ * @param {number} id - Identificador de la ruta
+ * @param {string} nombre - Nombre de la ruta
+ * @param {number[]} geolocalizacion_inicio - Geolocalización de inicio de la ruta
+ * @param {number[]} geolocalizacion_fin - Geolocalización de fin de la ruta
+ * @param {number} longitud - Longitud de la ruta
+ * @param {number} desnivel - Desnivel de la ruta
+ * @param {UsuarioDocumentInterface[]} usuarios - Usuarios que han realizado la ruta
+ * @param {"bicicleta" | "corriendo" | "bicicleta y corriendo"} tipo - Tipo de la ruta
+ * @param {number} calificacion - Calificación de la ruta
+ */
 const RutaSchema = new Schema<RutaDocumentInterface>({
   id : {
     type : Number,

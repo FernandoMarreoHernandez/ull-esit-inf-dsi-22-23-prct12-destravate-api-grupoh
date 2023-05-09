@@ -1,5 +1,9 @@
 # Práctica API REST
 
+[![Coveralls](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoh/actions/workflows/coveralls.yml/badge.svg)](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoh/actions/workflows/coveralls.yml)
+[![Tests](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoh/actions/workflows/node.js.yml/badge.svg)](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoh/actions/workflows/node.js.yml)
+[![Sonar-Cloud](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoh/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/ULL-ESIT-INF-DSI-2223/ull-esit-inf-dsi-22-23-prct12-destravate-api-grupoh/actions/workflows/sonarcloud.yml)
+
 ## Introducción
 En esta práctica se nos pide crear un API REST el cuál use como base de datos mongoose. También se nos pide usar async/await. Se nos pide realizar una api que permita realizar peticiones get, patch, post y delete, en este caso para una aplicación de información deportiva.
 
@@ -681,7 +685,7 @@ rutaRouter.patch('/tracks/:id', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const ruta = await Ruta.findByIdAndUpdate({
       _id: req.params.id
@@ -770,7 +774,7 @@ retoRouter.post('/challenges', async(req, res) => {
   }catch (error) {
     return res.status(500).send(error);
   }
-  
+
 
 });
 
@@ -814,7 +818,7 @@ retoRouter.patch('/challenges', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const reto = await Reto.findOneAndUpdate({
       nombre: req.query.nombre.toString()
@@ -840,7 +844,7 @@ retoRouter.patch('/challenges/:id', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const reto = await Reto.findByIdAndUpdate({
       _id: req.params.id
@@ -850,13 +854,13 @@ retoRouter.patch('/challenges/:id', async (req, res) => {
     });
     if (!reto) {
       return res.status(404).send();
-    } 
+    }
     return res.send(reto);
   } catch (error) {
     return res.status(500).send(error);
   }
 });
-   
+
 
 retoRouter.delete('/challenges', async (req, res) => {
   if (!req.query.nombre) {
@@ -895,7 +899,7 @@ retoRouter.delete('/challenges/:id', async (req, res) => {
     return res.status(500).send(error);
   }
 });
-```	
+```
 
 En este código se puede observar que se han añadido las operaciones de borrado de retos, que se encargan de borrar el reto de todas las listas en las que se encuentre, ya sea de amigos, grupos, retos, etc. También se ha añadido la operación de borrado de un reto por su id, que realiza la misma operación que la anterior pero con el id del reto.
 También tiene las operaciones de insertar, modificar, borrar y obtener retos, tanto por su id como por su nombre.
@@ -960,7 +964,7 @@ grupoRouter.patch('/groups', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const grupo = await Grupo.findOneAndUpdate({
       nombre: req.query.nombre.toString()
@@ -970,13 +974,13 @@ grupoRouter.patch('/groups', async (req, res) => {
     });
     if (!grupo) {
       return res.status(404).send();
-    } 
+    }
     return res.send(grupo);
   } catch (error) {
     return res.status(500).send(error);
   }
 });
-      
+
 
 grupoRouter.patch('/groups/:id', async (req, res) => {
   const allowedUpdates = ['nombre', 'id', 'participantes', 'estadisticas', 'clasificacion', 'rutas_favoritas', 'historico_rutas'];
@@ -987,7 +991,7 @@ grupoRouter.patch('/groups/:id', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const grupo = await Grupo.findByIdAndUpdate({
       _id: req.params.id,
@@ -997,13 +1001,13 @@ grupoRouter.patch('/groups/:id', async (req, res) => {
     });
     if (!grupo) {
       return res.status(404).send();
-    } 
+    }
     return res.send(grupo);
   }catch (error) {
     return res.status(500).send(error);
   }
 });
-    
+
 
 grupoRouter.delete('/groups', async(req, res) => {
   if (!req.query.nombre) {
@@ -1074,7 +1078,7 @@ En este código se le dice al servidor que se ejecute en el puerto que se le ha 
 ### Implementación del fichero de mongoose
 
 La implementación es la siguiente:
-    
+
 ```ts
 try {
   await connect(process.env.MONGODB_URL!);

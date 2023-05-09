@@ -14,6 +14,17 @@ interface GrupoDocumentInterface extends Document {
   historico_rutas : number[][][];
 }
 
+/**
+ * Esquema de la colección de grupos
+ * @type {Schema<GrupoDocumentInterface>}
+ * @param {number} id - Identificador del grupo
+ * @param {string} nombre - Nombre del grupo
+ * @param {UsuarioDocumentInterface[]} participantes - Participantes del grupo
+ * @param {number[][]} estadisticas - Estadisticas del grupo
+ * @param {UsuarioDocumentInterface[][]} clasificacion - Clasificación del grupo
+ * @param {RutaDocumentInterface[]} rutas_favoritas - Rutas favoritas del grupo
+ * @param {number[][][]} historico_rutas - Historico de rutas del grupo [[[fecha][rutas]],[[fecha][rutas]]]
+ */
 const GrupoSchema = new Schema<GrupoDocumentInterface>({
   id : {
     type : Number,

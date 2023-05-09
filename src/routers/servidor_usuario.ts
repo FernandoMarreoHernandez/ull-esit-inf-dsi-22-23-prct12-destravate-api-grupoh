@@ -9,6 +9,9 @@ export const usuarioRouter = express.Router();
 
 usuarioRouter.use(express.json());
 
+/**
+ * funcion para añadir un usuario
+ */
 usuarioRouter.post('/users', async (req, res) => {
   const usuario = new Usuario(req.body);
   try {
@@ -19,6 +22,9 @@ usuarioRouter.post('/users', async (req, res) => {
   }
 });
 
+/**
+ * funcion para mostrar los usuarios
+ */
 usuarioRouter.get('/users', async (req, res) => {
   const filter = req.query.nombre? {nombre: req.query.nombre.toString()} : {};
   try {
@@ -32,6 +38,9 @@ usuarioRouter.get('/users', async (req, res) => {
   }
 });
 
+/**
+ * funcion para mostrar un usuario en concreto por id
+ */
 usuarioRouter.get('/users/:id', async(req, res) => {
   try {
     const usuario = await Usuario.findById(req.params.id);
@@ -46,6 +55,9 @@ usuarioRouter.get('/users/:id', async(req, res) => {
   }
 });
 
+/**
+ * funcion para modificar un usuario en concreto por nombre
+ */
 usuarioRouter.patch('/users', async (req, res) => {
   if (!req.query.nombre) {
     return res.status(400).send({
@@ -76,6 +88,9 @@ usuarioRouter.patch('/users', async (req, res) => {
   }
 });
 
+/**
+ * funcion para modificar un usuario en concreto por id
+ */
 usuarioRouter.patch('/users/:id', async (req, res) => {
   const allowedUpdates = ['nombre', 'actividad', 'rutas_favoritas', 'retos_activos', 'amigos', 'grupos', 'estadisticas', 'historico_rutas'];
   const actualUpdates = Object.keys(req.body);
@@ -103,6 +118,9 @@ usuarioRouter.patch('/users/:id', async (req, res) => {
 
 });
 
+/**
+ * funcion para eliminar un usuario en concreto por nombre
+ */
 usuarioRouter.delete('/users', async (req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
@@ -147,6 +165,9 @@ usuarioRouter.delete('/users', async (req, res) => {
 });
 
 
+/**
+* funcion para eliminar un usuario en concreto por id
+*/
 usuarioRouter.delete('/users/:id', async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.params.id);

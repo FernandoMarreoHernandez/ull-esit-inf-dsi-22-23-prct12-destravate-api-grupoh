@@ -8,6 +8,9 @@ export const retoRouter = express.Router();
 
 retoRouter.use(express.json());
 
+/**
+ * funcion para añadir un reto
+ */
 retoRouter.post('/challenges', async(req, res) => {
   const reto = new Reto(req.body);
   try {
@@ -16,10 +19,13 @@ retoRouter.post('/challenges', async(req, res) => {
   }catch (error) {
     return res.status(500).send(error);
   }
-  
+
 
 });
 
+/**
+ * funcion para mostrar los retos
+ */
 retoRouter.get('/challenges', async (req, res) => {
   const filter = req.query.nombre? {nombre: req.query.nombre.toString()} : {};
   try {
@@ -33,6 +39,9 @@ retoRouter.get('/challenges', async (req, res) => {
   }
 });
 
+/**
+ * funcion para mostrar un reto en concreto
+ */
 retoRouter.get('/challenges/:id', async(req, res) => {
   try {
     const reto = await Reto.findById(req.params.id);
@@ -47,6 +56,9 @@ retoRouter.get('/challenges/:id', async(req, res) => {
   }
 });
 
+/**
+ * funcion para modificar un reto en concreto por nombre
+ */
 retoRouter.patch('/challenges', async (req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
@@ -60,7 +72,7 @@ retoRouter.patch('/challenges', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const reto = await Reto.findOneAndUpdate({
       nombre: req.query.nombre.toString()
@@ -77,6 +89,9 @@ retoRouter.patch('/challenges', async (req, res) => {
   }
 });
 
+/**
+ * funcion para modificar un reto en concreto por id
+ */
 retoRouter.patch('/challenges/:id', async (req, res) => {
   const allowedUpdates = ['nombre', 'id', 'rutas', 'tipo', 'kilometros', 'usuarios'];
   const actualUpdates = Object.keys(req.body);
@@ -86,7 +101,7 @@ retoRouter.patch('/challenges/:id', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const reto = await Reto.findByIdAndUpdate({
       _id: req.params.id
@@ -96,14 +111,16 @@ retoRouter.patch('/challenges/:id', async (req, res) => {
     });
     if (!reto) {
       return res.status(404).send();
-    } 
+    }
     return res.send(reto);
   } catch (error) {
     return res.status(500).send(error);
   }
 });
-   
 
+/**
+ * funcion para eliminar un reto en concreto por nombre
+ */
 retoRouter.delete('/challenges', async (req, res) => {
   if (!req.query.nombre) {
     res.status(400).send({
@@ -126,6 +143,9 @@ retoRouter.delete('/challenges', async (req, res) => {
   }
 });
 
+/**
+ * funcion para eliminar un reto en concreto por id
+ */
 retoRouter.delete('/challenges/:id', async (req, res) => {
   try {
     const reto = await Reto.findById(req.params.id);
