@@ -142,7 +142,7 @@ describe('PATCH /users', () => {
   it ("Se intenta hacer una modificacion no permitida", async () => {
     const id= (await Usuario.findOne({nombre: "Pablo"}))!._id;
     const response = await request(app).patch('/users/' + id).send({
-      teclado: 56,
+      campoInexistente: "valor",
     }).expect(501);
   });
 });

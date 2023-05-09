@@ -93,6 +93,62 @@ describe('PATCH / groups', () => {
     }).expect(200);
     expect(response.body.estadisticas).to.deep.equal([ [ 20, 20 ], [ 30, 40 ], [ 50, 60 ] ]);
   });
+  it("Se puede actualizar el grupo por el id unico", async () => {
+    const id = (await Grupo.findOne({nombre: 'Grupo 1'}))!._id;
+    const response = await request(app).patch(`/groups/${id}`).send({
+      estadisticas: [ [ 10, 20 ], [ 30, 40 ], [ 50, 60 ] ],
+    }).expect(200);
+    expect(response.body.estadisticas).to.deep.equal([ [ 10, 20 ], [ 30, 40 ], [ 50, 60 ] ]);
+  });
+  it("No se debe actualizar un campo inexistentes", async () => {
+    const response = await request(app).patch('/groups?nombre=Grupo 1').send({
+      campoInexistente: 'valor',
+    }).expect(400);
+  });
+  it("Se fuerza el error 500", async () => {
+    const id = (await Grupo.findOne({nombre: 'Grupo 1'}))!._id;
+    const response = await request(app).patch(`/groups/${id}` + 0).send({
+      estadisticas: [ [ 10, 20 ], [ 30, 40 ], [ 50, 60 ] ],
+    }).expect(500);
+  });
+  it("Se pide al usuario que proporciones un nombre", async () => {
+    const response = await request(app).patch('/groups').send({
+      estadisticas: [ [ 10, 20 ], [ 30, 40 ], [ 50, 60 ] ],
+    }).expect(400);
+  });
+  it("Se intenta hacer una modificación no permitida", async () => {
+    const id = (await Grupo.findOne({nombre: 'Grupo 1'}))!._id;
+    const response = await request(app).patch(`/groups/${id}`).send({
+      campoInexistente: 'valor',
+    }).expect(400);
+  });
+});
+
+describe('DELETE /groups', () => {
+  it('Se borra un grupo', async () => {
+    const response = await request(app).delete('/groups?nombre=Grupo 2').send().expect(200);
+    const grupo = await Grupo.findOne({nombre: "Grupo 2"});
+    expect(grupo).to.be.null;
+  });
+  it('Se puede borrar el grupo por el id unico', async () => {
+    const id = (await Grupo.findOne({nombre: "Grupo 2"}))!._id;
+    const response = await request(app).delete(`/groups/${id}`).send().expect(200);
+    const grupo = await Grupo.findOne({nombre: "Grupo 2"});
+    expect(grupo).to.be.null;
+  });
+  it('Fuerzo un error 404',async () => {
+    const response = await request(app).delete('/groups?nombre=pepe').send().expect(404);
+  });
+  it('Se debe proporcionar un nombre', async () => {
+    const response = await request(app).delete('/groups').send().expect(400);
+  });
+  it('Fuerzo un error 400',async () => {
+    const id = (await Grupo.findOne({nombre: "Grupo 2"}))!._id;
+    const response = await request(app).delete(`/groups/${id}` + 0).send().expect(500);
+  });
+  it('No se borra un grupo que no existe', async () => {
+    const response = await request(app).delete('/groups?nombre=Grupo 100').send().expect(404);
+  });
 });
 
 

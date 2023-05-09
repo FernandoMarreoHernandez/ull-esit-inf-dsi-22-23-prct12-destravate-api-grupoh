@@ -111,7 +111,12 @@ grupoRouter.delete('/groups', async(req, res) => {
     });
   } else {
     try {
-      await Grupo.findOneAndDelete({nombre: req.query.nombre.toString()});
+      const grupo = await Grupo.findOneAndDelete({nombre: req.query.nombre.toString()});
+      if(!grupo) {
+        return res.status(404).send();
+      }
+      const grupo_final = await Grupo.findOneAndDelete({nombre: req.query.nombre.toString()});
+      return res.status(200).send(grupo_final);
     }catch (error) {
       return res.status(500).send(error);
     }
@@ -120,7 +125,12 @@ grupoRouter.delete('/groups', async(req, res) => {
 
 grupoRouter.delete('/groups/:id', async (req, res) => {
   try {
-    await Grupo.findByIdAndDelete(req.params.id);
+    const grupo = Grupo.findById(req.params.id);
+    if (!grupo) {
+      return res.status(404).send();
+    }
+    const grupo_final = await Grupo.findByIdAndDelete(req.params.id);
+    return res.status(200).send(grupo_final);
   }catch (error) {
     return res.status(500).send(error);
   }

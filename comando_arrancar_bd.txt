@@ -1,0 +1,1 @@
+sudo /home/usuario/mongodb/bin/mongod --dbpath /home/usuario/mongodb-data/

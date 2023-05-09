@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.77% </span>
+                <span class="strong">84.12% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>49/63</span>
+                <span class='fraction'>53/63</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">50% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>2/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
-                <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.77% </span>
+                <span class="strong">84.12% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>49/63</span>
+                <span class='fraction'>53/63</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -157,13 +157,13 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -178,13 +178,13 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">152x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -219,14 +219,14 @@ const RetoSchema = new Schema&lt;RetoDocumentInterface&gt;({
     type: [Schema.Types.ObjectId],
     required: true,
     ref: 'Rutas',
-    validate : <span class="fstat-no" title="function not covered" >async (value : SchemaType[]) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      for(const ruta of value){</span>
+    validate : async (value : SchemaType[]) =&gt; {
+      for(const ruta of value)<span class="branch-0 cbranch-no" title="branch not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >        const rutacheck = await Ruta.findById(ruta);</span>
 <span class="cstat-no" title="statement not covered" >        if(!rutacheck){</span>
 <span class="cstat-no" title="statement not covered" >          throw new Error('La ruta no existe');</span>
 <span class="cstat-no" title="statement not covered" >        }</span>
 <span class="cstat-no" title="statement not covered" >      }</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+    }
   },
   tipo:{
     type: String,
@@ -240,14 +240,14 @@ const RetoSchema = new Schema&lt;RetoDocumentInterface&gt;({
     type: [Schema.Types.ObjectId],
     required: true,
     ref: 'Usuarios',
-    validate : <span class="fstat-no" title="function not covered" >async (value : SchemaType[]) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      for(const usuario of value){</span>
+    validate : async (value : SchemaType[]) =&gt; {
+      for(const usuario of value)<span class="branch-0 cbranch-no" title="branch not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >        const usuariocheck = await Usuario.findById(usuario);</span>
 <span class="cstat-no" title="statement not covered" >        if(!usuariocheck){</span>
 <span class="cstat-no" title="statement not covered" >          throw new Error('El usuario no existe');</span>
 <span class="cstat-no" title="statement not covered" >        }</span>
 <span class="cstat-no" title="statement not covered" >      }</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+    }
   }
 });
 &nbsp;
@@ -259,7 +259,7 @@ export const Reto = model&lt;RetoDocumentInterface&gt;('Reto', RetoSchema);
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-05-09T09:34:25.581Z
+                at 2023-05-09T11:57:36.944Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
