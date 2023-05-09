@@ -59,7 +59,7 @@ usuarioRouter.patch('/users', async (req, res) => {
     return res.status(400).send({
       error: 'Esta modificacion no esta permitida',
     });
-  } 
+  }
   try {
     const usuario = await Usuario.findOneAndUpdate({
       nombre: req.query.nombre.toString()
@@ -82,7 +82,7 @@ usuarioRouter.patch('/users/:id', async (req, res) => {
   const isValidUpdate =
       actualUpdates.every((update) => allowedUpdates.includes(update));
   if (!isValidUpdate) {
-    return res.status(400).send({
+    return res.status(501).send({
       error: 'Esta modificacion no esta permitida',
     });
   }
@@ -100,7 +100,7 @@ usuarioRouter.patch('/users/:id', async (req, res) => {
   } catch (error) {
     return res.status(500).send(error);
   }
-  
+
 });
 
 usuarioRouter.delete('/users', async (req, res) => {
