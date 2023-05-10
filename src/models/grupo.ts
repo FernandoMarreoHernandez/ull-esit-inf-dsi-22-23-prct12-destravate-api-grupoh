@@ -4,12 +4,12 @@ import { RutaDocumentInterface } from './ruta.js';
 import { Usuario } from './usuario.js';
 import { Ruta } from './ruta.js';
 
-interface GrupoDocumentInterface extends Document {
+export interface GrupoDocumentInterface extends Document {
   id : number;
   nombre : string;
   participantes : UsuarioDocumentInterface[];
   estadisticas : number[][];
-  clasificacion : UsuarioDocumentInterface[][];
+  clasificacion : UsuarioDocumentInterface[];
   rutas_favoritas : RutaDocumentInterface[];
   historico_rutas : number[][][];
 }
@@ -54,7 +54,7 @@ const GrupoSchema = new Schema<GrupoDocumentInterface>({
     required : true
   },
   clasificacion : {
-    type : [[Schema.Types.ObjectId]],
+    type : [Schema.Types.ObjectId],
     required : true,
     ref : 'Usuarios',
     validate : async (value : SchemaType[]) => {

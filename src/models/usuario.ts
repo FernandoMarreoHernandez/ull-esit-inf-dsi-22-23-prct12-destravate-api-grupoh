@@ -4,6 +4,7 @@ import { RetoDocumentInterface } from './reto.js';
 import { RutaDocumentInterface } from './ruta.js';
 import { Ruta } from './ruta.js';
 import { Reto } from './reto.js';
+import { GrupoDocumentInterface } from './grupo.js';
 
 
 export interface UsuarioDocumentInterface extends Document {
@@ -12,7 +13,7 @@ export interface UsuarioDocumentInterface extends Document {
   rutas_favoritas : RutaDocumentInterface[];
   retos_activos : RetoDocumentInterface[];
   amigos : UsuarioDocumentInterface[];
-  grupos: UsuarioDocumentInterface[][];
+  grupos: GrupoDocumentInterface[];
   estadisticas : number[][];
   actividad : "bicicleta" | "correr" | "bicicleta y correr";
   historico_rutas : number[][][];
@@ -86,16 +87,14 @@ const UsuarioSchema = new Schema<UsuarioDocumentInterface>({
     }
   },
   grupos : {
-    type : [[Schema.Types.ObjectId]],
+    type : [Schema.Types.ObjectId],
     required: true,
-    ref : 'Usuarios',
-    validate : async (value : SchemaType[][]) => {
+    ref : 'Grupos',
+    validate : async (value : SchemaType[]) => {
       for(const grupo of value){
-        for(const usuario of grupo){
-          const usuariocheck = await Usuario.findById(usuario);
-          if(!usuariocheck){
-            throw new Error('no puedes añadir a un amigo que no existe');
-          }
+        const grupocheck = await Usuario.findById(grupo);
+        if(!grupocheck){
+          throw new Error('El grupo no existe');
         }
       }
     }

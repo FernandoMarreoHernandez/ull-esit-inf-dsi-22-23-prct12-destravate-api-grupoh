@@ -177,11 +177,9 @@ usuarioRouter.delete('/users/:id', async (req, res) => {
     try {
       await Usuario.updateMany({}, {$pull: {amigos: usuario._id}});
     } catch (error) {}
-
-    try {
+    try{
       await Usuario.updateMany({}, {$pull: {grupos: usuario._id}});
     } catch (error) {}
-
     try {
       await Ruta.updateMany({}, {$pull: {usuarios: usuario._id}});
     } catch (error) {}
