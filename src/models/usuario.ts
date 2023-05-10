@@ -27,7 +27,7 @@ export interface UsuarioDocumentInterface extends Document {
  * @param {RutaDocumentInterface[]} rutas_favoritas - Rutas favoritas del usuario
  * @param {RetoDocumentInterface[]} retos_activos - Retos activos del usuario
  * @param {UsuarioDocumentInterface[]} amigos - Amigos del usuario
- * @param {UsuarioDocumentInterface[][]} grupos - Grupos del usuario
+ * @param {GrupoDocumentInterface[]} grupos - Grupos del usuario
  * @param {number[][]} estadisticas - Estadisticas del usuario
  * @param {"bicicleta" | "correr" | "bicicleta y correr"} actividad - Actividad del usuario
  * @param {number[][][]} historico_rutas - Historico de rutas del usuario [[[fecha][rutas]],[[fecha][rutas]]]
